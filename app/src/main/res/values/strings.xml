@@ -28,4 +28,9 @@
     <string name="json_db_err">"Error loading JSON database: I/O error or invalid JSON. If you didn\'t modify, rename or delete the original «database.json» file, please contact me (Raegdan)"</string>
     <string name="loading">Loading...</string>
     <string name="results_for">"Results for «%1$s»"</string>
+    <string name="arrow_main_menu">⇧ Main menu</string>
+    <string name="search_arrow">Search ⇧</string>
+    <string name="version">"version "</string>
+    <string name="author_license">Author: Raegdan\nLicense: GNU GPL v3</string>
+
 </resources>

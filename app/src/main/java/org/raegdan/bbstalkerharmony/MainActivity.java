@@ -2,6 +2,7 @@ package org.raegdan.bbstalkerharmony;
 
 import android.app.Activity;
 import android.app.ActionBar;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -89,60 +90,38 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
     // Continues activity init after DBLoader finishes
     ////////////////////////////////////////////////////
     protected void continueInit() {
-        // Don't init controls in case of DB loading failure.
-        // Show toast and leave the form dead.
         if (!((BBSHApplication) getApplication()).dbLoaded) {
             Toast.makeText(getApplicationContext(), getString(R.string.json_db_err), Toast.LENGTH_LONG).show();
             return;
         }
 
-        // Controls init
-    /*    btnMAQuery = (Button) findViewById(R.id.btnMAQuery);
-        btnMAWatchDB = (Button) findViewById(R.id.btnMAWatchDB);
-        btnMAWatchCollection = (Button) findViewById(R.id.btnMAWatchCollection);
-        btnMAHelp = (Button) findViewById(R.id.btnMAHelp);
-        btnMAConfig = (Button) findViewById(R.id.btnMAConfig);
-        btnMAWatchWaves = (Button) findViewById(R.id.btnMAWatchWaves);
-        btnMAWishlist = (Button) findViewById(R.id.btnMAWishlist);
-        btnMADetector = (Button) findViewById(R.id.btnMADetector);
+        if (((BBSHApplication) getApplication()).currentFragment == null) {
+            ((BBSHApplication) getApplication()).currentFragment = HomeFragment.newInstance();
+        }
 
-        etMAQuery = (EditText) findViewById(R.id.etMAQuery);
+        FragmentManager fm = getFragmentManager();
+        fm.beginTransaction().replace(R.id.container, ((BBSHApplication) getApplication()).currentFragment, "").commit();
 
-        btnMAQuery.setOnClickListener(this);
-        btnMAWatchDB.setOnClickListener(this);
-        btnMAWatchCollection.setOnClickListener(this);
-        btnMAHelp.setOnClickListener(this);
-        btnMAConfig.setOnClickListener(this);
-        btnMAWatchWaves.setOnClickListener(this);
-        btnMAWishlist.setOnClickListener(this);
-        btnMADetector.setOnClickListener(this);
 
-        etMAQuery.setOnClickListener(this);
-        etMAQuery.setOnEditorActionListener(this);
-
-        ShowWhatsNew(); */
+        // showWhatsNew();
     }
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
-        // update the main content by replacing fragments
-        FragmentManager fm = getFragmentManager();
-    /*    fragmentManager.beginTransaction()
-                .replace(R.id.container, HomeFragment.newInstance(position + 1))
-                .commit();
-                */
         switch (position) {
             case GlobalConstants.PAGE_HOME:
-                fm.beginTransaction().replace(R.id.container, HomeFragment.newInstance()).commit();
+                changeFragment(HomeFragment.newInstance());
                 break;
             case GlobalConstants.PAGE_ALL_FIGURES:
-                fm.beginTransaction().replace(R.id.container, FiguresListFragment.newInstance(GlobalConstants.QUERY_ALL_FIGURES, "")).commit();
+                changeFragment(FiguresListFragment.newInstance(GlobalConstants.QUERY_ALL_FIGURES, ""));
                 break;
             case GlobalConstants.PAGE_ALL_WAVES:
                 break;
             case GlobalConstants.PAGE_COLLECTION:
+                changeFragment(FiguresListFragment.newInstance(GlobalConstants.QUERY_COLLECTION, ""));
                 break;
             case GlobalConstants.PAGE_WISHLIST:
+                changeFragment(FiguresListFragment.newInstance(GlobalConstants.QUERY_WISHLIST, ""));
                 break;
             case GlobalConstants.PAGE_DETECTOR:
                 break;
@@ -151,25 +130,30 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
             case GlobalConstants.PAGE_CONFIG:
                 break;
         }
-
     }
 
-    public void onSectionAttached(int page, int mode, String comment) {
+    public void changeFragment(Fragment fragment) {
+        ((BBSHApplication) getApplication()).currentFragment = fragment;
+        FragmentManager fm = getFragmentManager();
+        fm.beginTransaction().replace(R.id.container, fragment, "").commit();
+    }
+
+    public void onFragmentReady(int page, int mode, String comment) {
         switch (page) {
             case GlobalConstants.PAGE_HOME:
                 mTitle = getString(R.string.app_name);
                 break;
             case GlobalConstants.PAGE_ALL_FIGURES:
-                mTitle = getString(R.string.nav_all_figures);
+                mTitle = getString(R.string.nav_all_figures) + " (" + comment + ")";;
                 break;
             case GlobalConstants.PAGE_ALL_WAVES:
                 mTitle = getString(R.string.nav_all_waves);
                 break;
             case GlobalConstants.PAGE_COLLECTION:
-                mTitle = getString(R.string.nav_collection);
+                mTitle = getString(R.string.nav_collection) + " (" + comment + ")";
                 break;
             case GlobalConstants.PAGE_WISHLIST:
-                mTitle = getString(R.string.nav_wishlist);
+                mTitle = getString(R.string.nav_wishlist) + " (" + comment + ")";
                 break;
             case GlobalConstants.PAGE_DETECTOR:
                 mTitle = getString(R.string.nav_detector);
@@ -230,6 +214,8 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
             case R.id.action_search: {
+                // Don't really understand the reason for Runnable here, but it's necessary to work correctly
+                // Thank StackOverflow gurus
                 etABSQuery.post(new Runnable() {
                     @Override
                     public void run() {
@@ -253,12 +239,15 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
         switch (v.getId()) {
             case R.id.etABSQuery: {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    //Hide keyboard
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
 
+                    //Collapse search field
                     miABS.collapseActionView();
-                    FragmentManager fm = getFragmentManager();
-                    fm.beginTransaction().replace(R.id.container, FiguresListFragment.newInstance(GlobalConstants.QUERY_SEARCH, v.getText().toString())).commit();
+
+                    //Change fragment
+                    changeFragment(FiguresListFragment.newInstance(GlobalConstants.QUERY_SEARCH, v.getText().toString()));
                 }
 
                 break;

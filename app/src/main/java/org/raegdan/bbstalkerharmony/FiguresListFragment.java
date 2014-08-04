@@ -31,28 +31,12 @@ public class FiguresListFragment extends Fragment implements OnItemClickListener
 
     BlindbagDB database;
     DBList dblist;
-    String CurrentBBUniqID = "";
-    Integer CurrentDBListID = 0;
     String query;
     int mode;
     SharedPreferences sp;
 
     ListView lvDBList;
     SimpleAdapter saDBList;
-    TextView tvDBHeader;
-
-    PopupWindow pw;
-    View vPWBBInfo;
-    RelativeLayout rlPWBBInfo;
-    TextView tvPWBBInfoName;
-    TextView tvPWBBInfoMisc;
-    ImageView ivPWBBInfoPonyPic;
-    ImageButton ibPWBBWiki;
-    ImageButton ibPWBBShareCommon;
-    ImageButton ibPWBBCart;
-    ImageButton ibPWBBUncart;
-    ImageButton ibPWBBWish;
-    EditText etPWBBShareShopname;
 
     ProgressDialog mDialog;
     HashMap<String, Object> locationCache;
@@ -69,8 +53,6 @@ public class FiguresListFragment extends Fragment implements OnItemClickListener
 
         mDialog = new ProgressDialog(parentActivity);
         mDialog.setCancelable(false);
-
-        // tvDBHeader = (TextView) getView().findViewById(R.id.tvDBHeader);
 
         lvDBList = (ListView) rootView.findViewById(R.id.lvFFL);
         lvDBList.setOnItemClickListener(this);
@@ -102,7 +84,7 @@ public class FiguresListFragment extends Fragment implements OnItemClickListener
         new QueryDatabase().execute(hm);
     }
 
-    protected class QueryDatabase extends AsyncTask<HashMap<String, Object>, Integer, String> {
+    protected class QueryDatabase extends AsyncTask<HashMap<String, Object>, Integer, Void> {
         protected void prepareDBList(BlindbagDB database, Context context) {
             dblist.fields = new String[] {"name", "misc", "img1", "star_img"};
             dblist.views = new int[] {R.id.tvFLIMain, R.id.tvFLIMisc, R.id.ivFLIWaveImage, R.id.ivFLIStar};
@@ -157,51 +139,40 @@ public class FiguresListFragment extends Fragment implements OnItemClickListener
         }
 
         @Override
-        protected String doInBackground(HashMap<String, Object>... arg0) {
+        protected Void doInBackground(HashMap<String, Object>... arg0) {
             BlindbagDB db = new BlindbagDB();
 
-            String titleMsg = "";
             int mode = (Integer) arg0[0].get("mode");
             String query = ((String) arg0[0].get("query"));
             Context context = (Context) arg0[0].get("context");
 
             switch (mode) {
                 case GlobalConstants.QUERY_ALL_FIGURES: {
-                    titleMsg = context.getString(R.string.all_db);
                     db = database;
                     break;
                 }
 
                 case GlobalConstants.QUERY_SEARCH: {
-                    titleMsg = context.getString(R.string.results_for) + query + "»";
                     db = database.lookupDB(query, sp.getBoolean("smart_search", true));
                     break;
                 }
 
                 case GlobalConstants.QUERY_COLLECTION: {
-                    titleMsg = context.getString(R.string.my_collection);
                     db = database.getCollection(context);
                     break;
                 }
 
                 case GlobalConstants.QUERY_WISHLIST: {
-                    titleMsg = context.getString(R.string.wishlist);
                     db = database.getWishlist(context);
                     break;
                 }
 
                 case GlobalConstants.QUERY_WAVE: {
-                    if (Integer.parseInt(query) <= 100) {
-                        titleMsg = context.getString(R.string.wave) + query;
-                    } else {
-                        titleMsg = database.getWaveByWaveID(query).name;
-                    }
                     db = database.getWaveBBs(query);
                     break;
                 }
 
                 case GlobalConstants.QUERY_DETECTOR: {
-                    titleMsg = context.getString(R.string.detector);
                     db = database.reverseLookup(query);
                     break;
                 }
@@ -209,45 +180,62 @@ public class FiguresListFragment extends Fragment implements OnItemClickListener
 
             prepareDBList(db, context);
 
-            return titleMsg;
+            return null;
         }
 
         @Override
-        protected void onPostExecute (String result) {
-            dbQueryFinished(result);
+        protected void onPostExecute (Void result) {
+            dbQueryFinished();
         }
     }
 
-    protected void dbQueryFinished(String TitleMsg) {
-        /*switch (mode) {
-            case GlobalConstants.QUERY_COLLECTION: {
-                tvDBHeader.setText(TitleMsg + " (" + Integer.toString(dblist.total_count) + ")");
-                break;
-            }
-
-            case GlobalConstants.QUERY_WISHLIST: {
-                tvDBHeader.setText(TitleMsg + " (" + Integer.toString(dblist.data.size()) + ")");
-                break;
-            }
-
-            default: {
-                tvDBHeader.setText(TitleMsg);
-            }
-        }*/
-
+    protected void dbQueryFinished() {
         saDBList = new SimpleAdapter(parentActivity, dblist.data, R.layout.figures_list_item, dblist.fields, dblist.views);
         lvDBList.setAdapter(saDBList);
 
-        mDialog.dismiss();
+        fragmentReady();
 
-        /* if (dblist.data.size() == 0) {
-            tvDBHeader.setText(TitleMsg + "\n\n" + getString(R.string.empty_list));
-            return;
-        } else if (dblist.data.size() == 1) {
-            lvDBListItemClicked(0);
-        } */
+        mDialog.dismiss();
     }
 
+    protected void fragmentReady() {
+        int page = GlobalConstants.ERRORNEOUS_PAGE;
+        String comment = "";
+
+        switch (this.getArguments().getInt(GlobalConstants.ARG_MODE)) {
+            case GlobalConstants.QUERY_SEARCH: {
+                page = GlobalConstants.PAGE_SEARCH;
+                comment = this.getArguments().getString(GlobalConstants.ARG_QUERY);
+                break;
+            }
+            case GlobalConstants.QUERY_ALL_FIGURES: {
+                page = GlobalConstants.PAGE_ALL_FIGURES;
+                comment = Integer.toString(dblist.data.size());
+                break;
+            }
+            case GlobalConstants.QUERY_WAVE: {
+                page = GlobalConstants.PAGE_WAVE;
+                comment = query;
+                break;
+            }
+            case GlobalConstants.QUERY_COLLECTION: {
+                page = GlobalConstants.PAGE_COLLECTION;
+                comment = Integer.toString(dblist.total_count);
+                break;
+            }
+            case GlobalConstants.QUERY_WISHLIST: {
+                page = GlobalConstants.PAGE_WISHLIST;
+                comment = Integer.toString(dblist.data.size());
+                break;
+            }
+            case GlobalConstants.QUERY_DETECTOR: {
+                page = GlobalConstants.PAGE_DETECTOR_RESULTS;
+                break;
+            }
+        }
+
+        ((MainActivity) parentActivity).onFragmentReady(page, this.getArguments().getInt(GlobalConstants.ARG_MODE), comment);
+    }
 
     public static FiguresListFragment newInstance(int queryMode, String query) {
         FiguresListFragment fragment = new FiguresListFragment();
@@ -273,58 +261,8 @@ public class FiguresListFragment extends Fragment implements OnItemClickListener
         super.onAttach(activity);
 
         parentActivity = activity;
-
-        int page = GlobalConstants.ERRORNEOUS_PAGE;
-        String comment = "";
-
-        switch (this.getArguments().getInt(GlobalConstants.ARG_MODE)) {
-            case GlobalConstants.QUERY_SEARCH: {
-                page = GlobalConstants.PAGE_SEARCH;
-                comment = this.getArguments().getString(GlobalConstants.ARG_QUERY);
-                break;
-            }
-            case GlobalConstants.QUERY_ALL_FIGURES: {
-                page = GlobalConstants.PAGE_ALL_FIGURES;
-                break;
-            }
-            case GlobalConstants.QUERY_WAVE: {
-                page = GlobalConstants.PAGE_WAVE;
-                //TODO comment = wave number
-                break;
-            }
-            case GlobalConstants.QUERY_COLLECTION: {
-                page = GlobalConstants.PAGE_COLLECTION;
-                //TODO comment = collection size
-                break;
-            }
-            case GlobalConstants.QUERY_WISHLIST: {
-                page = GlobalConstants.PAGE_WISHLIST;
-                //TODO comment = wishlist size
-                break;
-            }
-            case GlobalConstants.QUERY_DETECTOR: {
-                page = GlobalConstants.PAGE_DETECTOR_RESULTS;
-                this.getArguments().getString(GlobalConstants.ARG_QUERY);
-                break;
-            }
-        }
-
-        ((MainActivity) activity).onSectionAttached(page, this.getArguments().getInt(GlobalConstants.ARG_MODE), comment);
     }
 
-    /**
-     * Callback method to be invoked when an item in this AdapterView has
-     * been clicked.
-     * <p/>
-     * Implementers can call getItemAtPosition(position) if they need
-     * to access the data associated with the selected item.
-     *
-     * @param parent   The AdapterView where the click happened.
-     * @param view     The view within the AdapterView that was clicked (this
-     *                 will be a view provided by the adapter)
-     * @param position The position of the view in the adapter.
-     * @param id       The row id of the item that was clicked.
-     */
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 

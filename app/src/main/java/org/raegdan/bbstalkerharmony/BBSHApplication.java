@@ -1,6 +1,7 @@
 package org.raegdan.bbstalkerharmony;
 
 import android.app.Application;
+import android.app.Fragment;
 import android.content.Context;
 
 public class BBSHApplication extends Application {
@@ -8,6 +9,7 @@ public class BBSHApplication extends Application {
     // Global database variable and methods for it
     public BlindbagDB database;
     public Boolean dbLoaded;
+    public Fragment currentFragment;
 
     public BBSHApplication() {
         super();
