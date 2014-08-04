@@ -3,9 +3,10 @@ package org.raegdan.bbstalkerharmony;
 import android.app.Activity;
 import android.app.ActionBar;
 import android.app.FragmentManager;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,23 +14,30 @@ import android.view.View;
 import android.support.v4.widget.DrawerLayout;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity implements NavigationDrawerFragment.NavigationDrawerCallbacks, TextView.OnEditorActionListener {
+
+    // Controls
+    Button btnMAQuery;
+    Button btnMAWatchDB;
+    Button btnMAWatchCollection;
+    Button btnMAHelp;
+    Button btnMAConfig;
+    Button btnMAWatchWaves;
+    Button btnMAWishlist;
+    Button btnMADetector;
+
+    EditText etMAQuery;
+    ProgressDialog mDialog;
 
     private EditText etABSQuery;
     private MenuItem miABS;
     private View vABS;
-
-    /**
-     * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
-     */
     private NavigationDrawerFragment mNavigationDrawerFragment;
-
-    /**
-     * Used to store the last screen title. For use in {@link #restoreActionBar()}.
-     */
     private CharSequence mTitle;
 
     @Override
@@ -41,11 +49,82 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
         mTitle = getTitle();
         mNavigationDrawerFragment = (NavigationDrawerFragment) getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
+
+        if (((BBSHApplication) getApplication()).dbLoaded) {
+            continueInit();
+        } else {
+            // Dialog init
+            mDialog = new ProgressDialog(this);
+
+            // Start async database loading
+            new DBLoader().execute(this);
+        }
+    }
+
+    //////////////////////////////////////////////
+    // AsyncTask for loading global DB from JSON
+    //////////////////////////////////////////////
+    protected class DBLoader extends AsyncTask<Activity, Integer, Void> {
+        @Override
+        protected void onPreExecute () {
+            mDialog.setCancelable(false);
+            mDialog.setMessage(getString(R.string.loading));
+            mDialog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Activity... arg0) {
+            ((BBSHApplication) getApplication()).dbLoaded = ((BBSHApplication) arg0[0].getApplication()).loadDB(arg0[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute (Void arg0) {
+            mDialog.dismiss();
+            continueInit();
+        }
+    }
+
+    ////////////////////////////////////////////////////
+    // Continues activity init after DBLoader finishes
+    ////////////////////////////////////////////////////
+    protected void continueInit() {
+        // Don't init controls in case of DB loading failure.
+        // Show toast and leave the form dead.
+        if (!((BBSHApplication) getApplication()).dbLoaded) {
+            Toast.makeText(getApplicationContext(), getString(R.string.json_db_err), Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        // Controls init
+    /*    btnMAQuery = (Button) findViewById(R.id.btnMAQuery);
+        btnMAWatchDB = (Button) findViewById(R.id.btnMAWatchDB);
+        btnMAWatchCollection = (Button) findViewById(R.id.btnMAWatchCollection);
+        btnMAHelp = (Button) findViewById(R.id.btnMAHelp);
+        btnMAConfig = (Button) findViewById(R.id.btnMAConfig);
+        btnMAWatchWaves = (Button) findViewById(R.id.btnMAWatchWaves);
+        btnMAWishlist = (Button) findViewById(R.id.btnMAWishlist);
+        btnMADetector = (Button) findViewById(R.id.btnMADetector);
+
+        etMAQuery = (EditText) findViewById(R.id.etMAQuery);
+
+        btnMAQuery.setOnClickListener(this);
+        btnMAWatchDB.setOnClickListener(this);
+        btnMAWatchCollection.setOnClickListener(this);
+        btnMAHelp.setOnClickListener(this);
+        btnMAConfig.setOnClickListener(this);
+        btnMAWatchWaves.setOnClickListener(this);
+        btnMAWishlist.setOnClickListener(this);
+        btnMADetector.setOnClickListener(this);
+
+        etMAQuery.setOnClickListener(this);
+        etMAQuery.setOnEditorActionListener(this);
+
+        ShowWhatsNew(); */
     }
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
-        Log.d("oNDIS", String.valueOf(position));
         // update the main content by replacing fragments
         FragmentManager fm = getFragmentManager();
     /*    fragmentManager.beginTransaction()
@@ -57,7 +136,6 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
                 fm.beginTransaction().replace(R.id.container, HomeFragment.newInstance()).commit();
                 break;
             case GlobalConstants.PAGE_ALL_FIGURES:
-                //TODO
                 fm.beginTransaction().replace(R.id.container, FiguresListFragment.newInstance(GlobalConstants.QUERY_ALL_FIGURES, "")).commit();
                 break;
             case GlobalConstants.PAGE_ALL_WAVES:
@@ -106,15 +184,20 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
             case GlobalConstants.PAGE_CONFIG:
                 mTitle = getString(R.string.nav_config);
                 break;
+            case GlobalConstants.PAGE_SEARCH:
+                mTitle = String.format(getString(R.string.results_for), comment);
+                break;
         }
+
+        restoreActionBar();
     }
 
     public void restoreActionBar() {
         ActionBar actionBar = getActionBar();
-
         assert actionBar != null;
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setDisplayShowTitleEnabled(true);
+
         actionBar.setTitle(mTitle);
     }
 
@@ -163,12 +246,19 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
         return super.onOptionsItemSelected(item);
     }
 
+
+
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         switch (v.getId()) {
             case R.id.etABSQuery: {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    //TODO Perform query
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
+
+                    miABS.collapseActionView();
+                    FragmentManager fm = getFragmentManager();
+                    fm.beginTransaction().replace(R.id.container, FiguresListFragment.newInstance(GlobalConstants.QUERY_SEARCH, v.getText().toString())).commit();
                 }
 
                 break;
