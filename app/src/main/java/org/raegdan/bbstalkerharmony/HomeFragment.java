@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.text.method.LinkMovementMethod;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
@@ -15,9 +16,8 @@ import android.widget.TextView;
 
 public class HomeFragment extends Fragment {
 
-    TextView tvFHVersion;
-    TextView tvFHAuthorLicense;
-    ImageView ivFHBanner;
+    TextView tvFHGo;
+    TextView tvFHVersionValue;
 
     Activity parentActivity;
     View rootView;
@@ -51,37 +51,23 @@ public class HomeFragment extends Fragment {
         super.onResume();
 
         //ViewGroup.LayoutParams lp = ivFHBanner.getLayoutParams();
-        int textSize = ivFHBanner.get;// / BANNER_ORIGINAL_WIDTH) * TEXT_SCALING_Q;
-        Log.d("BBSH", String.valueOf(textSize));
+       // int textSize = ivFHBanner.get;// / BANNER_ORIGINAL_WIDTH) * TEXT_SCALING_Q;
+        //Log.d("BBSH", String.valueOf(textSize));
     }
 
     @Override
     public void onStart() {
         super.onStart();
 
-        tvFHVersion = (TextView) rootView.findViewById(R.id.tvFHVersion);
-        tvFHAuthorLicense = (TextView) rootView.findViewById(R.id.tvFHAuthorLicense);
-        ivFHBanner = (ImageView) rootView.findViewById(R.id.ivFHBanner);
+        tvFHGo = (TextView) rootView.findViewById(R.id.tvFHGo);
+        tvFHVersionValue = (TextView) rootView.findViewById(R.id.tvFHVersionValue);
 
-
-
-        final int BANNER_ORIGINAL_WIDTH = 720;
-        final int TEXT_SCALING_Q = 30;
-
-        //ViewGroup.LayoutParams lp = ivFHBanner.getLayoutParams();
-        //int textSize = ivFHBanner.getWidth();// / BANNER_ORIGINAL_WIDTH) * TEXT_SCALING_Q;
-        //Log.d("BBSH", String.valueOf(textSize));
-        //tvFHVersion.setTextSize(TypedValue.COMPLEX_UNIT_DIP, textSize);
-
-
-        String version = "n/a";
+        tvFHGo.setMovementMethod(LinkMovementMethod.getInstance());
         try {
-            version = parentActivity.getPackageManager().getPackageInfo(parentActivity.getPackageName(), 0).versionName;
+            tvFHVersionValue.setText(parentActivity.getPackageManager().getPackageInfo(parentActivity.getPackageName(), 0).versionName);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-
-        tvFHVersion.setText(getString(R.string.version) + version);
     }
 
 

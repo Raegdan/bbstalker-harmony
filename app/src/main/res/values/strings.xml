@@ -30,7 +30,19 @@
     <string name="results_for">"Results for «%1$s»"</string>
     <string name="arrow_main_menu">⇧ Main menu</string>
     <string name="search_arrow">Search ⇧</string>
-    <string name="version">"version "</string>
-    <string name="author_license">Author: Raegdan\nLicense: GNU GPL v3</string>
+    <string name="version">"Version:"</string>
+    <string name="author">Author:</string>
+    <string name="raegdan">Raegdan</string>
+    <string name="license">License:</string>
+    <string name="gpl3">GNU GPL v3</string>
+    <string name="github">GitHub:</string>
+    <string name="githublink"><a href="https://github.com/Raegdan/bbstalker-harmony/">Go...</a></string>
+    <string name="yourcollection">YOUR COLLECTION</string>
+    <string name="total_figures">Total figures:</string>
+    <string name="uniq_figures">Unique figures:</string>
+    <string name="wished_figures">Wished figures:</string>
+    <string name="about">ABOUT BBSTALKER HARMONY</string>
+
+
 
 </resources>
