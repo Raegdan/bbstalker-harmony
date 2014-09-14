@@ -15,24 +15,12 @@ import android.view.View;
 import android.support.v4.widget.DrawerLayout;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity implements NavigationDrawerFragment.NavigationDrawerCallbacks, TextView.OnEditorActionListener {
 
-    // Controls
-    Button btnMAQuery;
-    Button btnMAWatchDB;
-    Button btnMAWatchCollection;
-    Button btnMAHelp;
-    Button btnMAConfig;
-    Button btnMAWatchWaves;
-    Button btnMAWishlist;
-    Button btnMADetector;
-
-    EditText etMAQuery;
     ProgressDialog mDialog;
 
     private EditText etABSQuery;
@@ -116,6 +104,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
                 changeFragment(FiguresListFragment.newInstance(GlobalConstants.QUERY_ALL_FIGURES, ""));
                 break;
             case GlobalConstants.PAGE_ALL_WAVES:
+                changeFragment(WavesFragment.newInstance());
                 break;
             case GlobalConstants.PAGE_COLLECTION:
                 changeFragment(FiguresListFragment.newInstance(GlobalConstants.QUERY_COLLECTION, ""));
@@ -144,7 +133,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
                 mTitle = getString(R.string.app_name);
                 break;
             case GlobalConstants.PAGE_ALL_FIGURES:
-                mTitle = getString(R.string.nav_all_figures) + " (" + comment + ")";;
+                mTitle = getString(R.string.nav_all_figures) + " (" + comment + ")";
                 break;
             case GlobalConstants.PAGE_ALL_WAVES:
                 mTitle = getString(R.string.nav_all_waves);

@@ -25,8 +25,8 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="@string/author"
-        android:id="@+id/textView"
-        android:layout_below="@+id/textView6"
+        android:id="@+id/tvFHAuthor"
+        android:layout_below="@+id/tvFHVersion"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="16dp" />
 
@@ -35,10 +35,10 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="@string/raegdan"
-        android:id="@+id/textView2"
+        android:id="@+id/tvFHAuthorValue"
         android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/textView"
-        android:layout_alignBottom="@+id/textView"
+        android:layout_alignTop="@+id/tvFHAuthor"
+        android:layout_alignBottom="@+id/tvFHAuthor"
         android:layout_marginRight="16dp" />
 
     <TextView
@@ -46,8 +46,8 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="@string/license"
-        android:id="@+id/textView3"
-        android:layout_below="@+id/textView"
+        android:id="@+id/tvFHLicense"
+        android:layout_below="@+id/tvFHAuthor"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="16dp" />
 
@@ -56,10 +56,10 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="@string/gpl3"
-        android:id="@+id/textView4"
-        android:layout_alignTop="@+id/textView3"
+        android:id="@+id/tvFHLicenseValue"
+        android:layout_alignTop="@+id/tvFHLicense"
         android:layout_alignParentRight="true"
-        android:layout_alignBottom="@+id/textView3"
+        android:layout_alignBottom="@+id/tvFHLicense"
         android:layout_marginRight="16dp" />
 
     <TextView
@@ -67,8 +67,8 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="@string/github"
-        android:id="@+id/textView5"
-        android:layout_below="@+id/textView3"
+        android:id="@+id/tvFHGithub"
+        android:layout_below="@+id/tvFHLicense"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="16dp" />
 
@@ -77,10 +77,10 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="@string/githublink"
-        android:id="@+id/tvFHGo"
-        android:layout_alignTop="@+id/textView5"
+        android:id="@+id/tvFHGithubLink"
+        android:layout_alignTop="@+id/tvFHGithub"
         android:layout_alignParentRight="true"
-        android:layout_alignBottom="@+id/textView5"
+        android:layout_alignBottom="@+id/tvFHGithub"
         android:linksClickable="true"
         android:layout_marginRight="16dp" />
 
@@ -89,8 +89,8 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="@string/version"
-        android:id="@+id/textView6"
-        android:layout_below="@+id/textView15"
+        android:id="@+id/tvFHVersion"
+        android:layout_below="@+id/tvFHAboutProgram"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="16dp" />
 
@@ -100,8 +100,8 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:id="@+id/tvFHVersionValue"
         android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/textView6"
-        android:layout_alignBottom="@+id/textView6"
+        android:layout_alignTop="@+id/tvFHVersion"
+        android:layout_alignBottom="@+id/tvFHVersion"
         android:text="0.0.0"
         android:layout_marginRight="16dp" />
 
@@ -109,7 +109,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:id="@+id/textView7"
+        android:id="@+id/tvFHYourCollection"
         android:layout_below="@+id/ivFHBanner"
         android:layout_alignParentLeft="true"
         android:text="@string/yourcollection"
@@ -120,8 +120,8 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="@string/total_figures"
-        android:id="@+id/textView8"
-        android:layout_below="@+id/textView7"
+        android:id="@+id/tvFHTotalFigures"
+        android:layout_below="@+id/tvFHYourCollection"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="16dp" />
 
@@ -130,8 +130,8 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="@string/uniq_figures"
-        android:id="@+id/textView9"
-        android:layout_below="@+id/textView8"
+        android:id="@+id/tvFHUniqFigures"
+        android:layout_below="@+id/tvFHTotalFigures"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="16dp" />
 
@@ -140,8 +140,8 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="@string/wished_figures"
-        android:id="@+id/textView11"
-        android:layout_below="@+id/textView9"
+        android:id="@+id/tvFHWishedFigures"
+        android:layout_below="@+id/tvFHUniqFigures"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="16dp" />
 
@@ -150,10 +150,10 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="0"
-        android:id="@+id/textView12"
+        android:id="@+id/tvFHTotalFiguresValue"
         android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/textView8"
-        android:layout_alignBottom="@+id/textView8"
+        android:layout_alignTop="@+id/tvFHTotalFigures"
+        android:layout_alignBottom="@+id/tvFHTotalFigures"
         android:layout_marginRight="16dp" />
 
     <TextView
@@ -161,10 +161,10 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="0"
-        android:id="@+id/textView13"
+        android:id="@+id/tvFHUniqFiguresValue"
         android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/textView9"
-        android:layout_alignBottom="@+id/textView9"
+        android:layout_alignTop="@+id/tvFHUniqFigures"
+        android:layout_alignBottom="@+id/tvFHUniqFigures"
         android:layout_marginRight="16dp" />
 
     <TextView
@@ -172,10 +172,10 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="0"
-        android:id="@+id/textView14"
+        android:id="@+id/tvFHWishedFiguresValue"
         android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/textView11"
-        android:layout_alignBottom="@+id/textView11"
+        android:layout_alignTop="@+id/tvFHWishedFigures"
+        android:layout_alignBottom="@+id/tvFHWishedFigures"
         android:layout_marginRight="16dp" />
 
     <TextView
@@ -183,10 +183,30 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="@string/about"
-        android:id="@+id/textView15"
-        android:layout_below="@+id/textView11"
+        android:id="@+id/tvFHAboutProgram"
+        android:layout_below="@+id/tvFHWishedFigures"
         android:layout_alignParentLeft="true"
         android:layout_marginTop="16dp"
         android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/vkcom"
+        android:id="@+id/tvFHVK"
+        android:layout_below="@+id/tvFHGithub"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="16dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/vkcomlink"
+        android:id="@+id/tvFHVKLink"
+        android:layout_below="@+id/tvFHGithubLink"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="16dp" />
 
 </RelativeLayout>
